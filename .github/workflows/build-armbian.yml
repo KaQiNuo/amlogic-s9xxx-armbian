@@ -20,7 +20,7 @@ on:
       armbian_board:
         description: "Select device board."
         required: false
-        default: "all"
+        default: "eaidk-610"
         type: choice
         options:
           - all
@@ -68,6 +68,11 @@ on:
         description: "Build a minimal image."
         required: false
         default: false
+        type: boolean
+      build_desktop:
+        description: "Build a desktop image."
+        required: false
+        default: true
         type: boolean
       armbian_kernel:
         description: "Select kernel version."
@@ -168,7 +173,7 @@ jobs:
           # Compile method and parameter description: https://docs.armbian.com/Developer-Guide_Build-Options
           cd build/
               ./compile.sh RELEASE=${{ env.ARMBIAN_RELEASE }} BUILD_MINIMAL=${{ env.ARMBIAN_MINIMAL_OPTION }} \
-                  BOARD=odroidn2 BRANCH=current BUILD_ONLY=default HOST=armbian BUILD_DESKTOP=no EXPERT=yes \
+                  BOARD=odroidn2 BRANCH=current BUILD_ONLY=default HOST=armbian BUILD_DESKTOP=yes EXPERT=yes \
                   KERNEL_CONFIGURE=no CLEAN_LEVEL="make,cache,alldebs,sources" COMPRESS_OUTPUTIMAGE="sha"
           echo "build_tag=Armbian_${{ env.ARMBIAN_RELEASE }}${{ env.ARMBIAN_MINIMAL_TAG }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
@@ -197,7 +202,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Rebuild Armbian
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: KaQiNuo/amlogic-s9xxx-armbian@main
         if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
         with:
           build_target: armbian
