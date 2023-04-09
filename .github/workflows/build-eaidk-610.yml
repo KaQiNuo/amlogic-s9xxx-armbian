@@ -173,7 +173,7 @@ jobs:
               ./compile.sh RELEASE=${{ inputs.set_release }} BUILD_MINIMAL=${{ env.ARMBIAN_MINIMAL_OPTION }} \
                   BOARD=odroidn2 BRANCH=current BUILD_ONLY=default HOST=armbian BUILD_DESKTOP=yes \
                   DESKTOP_ENVIRONMENT=xfce \
-                  DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base EXPERT=yes \
+                  DESKTOP_ENVIRONMENT_CONFIG_NAME=config_base DESKTOP_APPGROUPS_SELECTED="" EXPERT=yes \
                   KERNEL_CONFIGURE=no CLEAN_LEVEL="make,cache,alldebs,sources" COMPRESS_OUTPUTIMAGE="sha"
           echo "build_tag=Armbian_${{ inputs.set_release }}${{ env.ARMBIAN_MINIMAL_TAG }}_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
