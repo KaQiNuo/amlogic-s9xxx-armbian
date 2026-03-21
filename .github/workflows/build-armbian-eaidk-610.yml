@@ -12,7 +12,7 @@ on:
       set_release:
         description: "Select OS Release."
         required: false
-        default: "trixie"
+        default: "noble"
         type: choice
         options:
           - trixie
@@ -155,14 +155,14 @@ jobs:
           ln -sf /builder/build /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-      - name: Compile Armbian [ ${{ inputs.set_release }} ]
+      - name: Compile Armbian [ ${{ inputs.set_release || 'trixie' }} ]
         id: compile
         working-directory: /builder
         if: ${{ steps.down.outputs.status == 'success' && !cancelled() }}
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes 2>/dev/null || true
           cd build/
-              ./compile.sh RELEASE=${{ inputs.set_release }} BOARD=odroidn2 BRANCH=current BUILD_MINIMAL=no \
+              ./compile.sh RELEASE=${{ inputs.set_release || 'trixie' }} BOARD=odroidn2 BRANCH=current BUILD_MINIMAL=no \
                            BUILD_ONLY=default HOST=armbian BUILD_DESKTOP=no EXPERT=yes KERNEL_CONFIGURE=no \
                            COMPRESS_OUTPUTIMAGE="sha" SHARE_LOG=yes
           echo "status=success" >> ${GITHUB_OUTPUT}
@@ -172,13 +172,13 @@ jobs:
         if: ${{ steps.compile.outputs.status == 'success' && !cancelled() }}
         run: |
           chmod +x ${ROOTFS_SCRIPT}
-          ${ROOTFS_SCRIPT} -v ${{ inputs.set_release }} -s true -c true -k true -p arm64
+          ${ROOTFS_SCRIPT} -v ${{ inputs.set_release || 'trixie' }} -s true -c true -k true -p arm64
 
           cd build/
           rm -rf $(ls . | grep -v "^output$" | xargs) 2>/dev/null
 
           df -hT ${PWD}
-          echo "build_tag=Armbian_${{ inputs.set_release }}_arm64_${{ inputs.armbian_edition }}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
+          echo "build_tag=Armbian_${{ inputs.set_release || 'trixie' }}_arm64_${{ inputs.armbian_edition || 'server' }}_$(date +"%Y.%m")" >> ${GITHUB_ENV}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Upload Armbian image to Release
@@ -198,12 +198,12 @@ jobs:
           build_target: armbian
           armbian_path: build/output/images/*.img.gz
           armbian_board: eaidk-610
-          armbian_kernel: ${{ inputs.armbian_kernel }}
-          auto_kernel: ${{ inputs.auto_kernel }}
-          kernel_repo: ${{ inputs.kernel_repo }}
-          kernel_usage: ${{ inputs.kernel_usage }}
-          armbian_fstype: ${{ inputs.armbian_fstype }}
-          builder_name: ${{ inputs.builder_name }}
+          armbian_kernel: ${{ inputs.armbian_kernel || '6.1.y_6.6.y' }}
+          auto_kernel: ${{ inputs.auto_kernel || 'true' }}
+          kernel_repo: ${{ inputs.kernel_repo || 'ophub/kernel' }}
+          kernel_usage: ${{ inputs.kernel_usage || 'stable' }}
+          armbian_fstype: ${{ inputs.armbian_fstype || 'ext4' }}
+          builder_name: ${{ inputs.builder_name || 'ophub' }}
 
       - name: Upload rebuilt images to Release
         uses: ncipollo/release-action@main
