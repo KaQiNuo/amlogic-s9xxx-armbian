@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os_release: [trixie, bookworm, resolute, noble]
+        os_release: [trixie, bookworm, noble]
     if: ${{ github.event.repository.owner.id == github.event.sender.id }}
 
     steps:
