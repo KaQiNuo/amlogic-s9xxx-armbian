@@ -13,7 +13,7 @@ on:
   push:
     branches:
       - main
-      - eaidk-610-dev
+      - eaidk-610
 
 env:
   TZ: Etc/UTC
@@ -125,7 +125,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rebuild Armbian for EAIDK-610
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: KaQiNuo/amlogic-s9xxx-armbian@eaidk-610
         if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
         with:
           build_target: armbian
