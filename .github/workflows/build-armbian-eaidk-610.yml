@@ -84,7 +84,7 @@ on:
   push:
     branches:
       - main
-      - eaidk-610-dev
+      - eaidk-610
 
 env:
   TZ: Etc/UTC
