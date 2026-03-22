@@ -192,7 +192,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rebuild Armbian for EAIDK-610
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: ${{ github.repository }}@eaidk-610
         if: ${{ steps.clean.outputs.status == 'success' && !cancelled() }}
         with:
           build_target: armbian
