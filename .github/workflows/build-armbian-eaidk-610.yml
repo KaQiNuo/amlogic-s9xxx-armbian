@@ -15,10 +15,10 @@ on:
         default: "noble"
         type: choice
         options:
+          - noble
           - trixie
           - bookworm
           - resolute
-          - noble
       armbian_kernel:
         description: "Select kernel version."
         required: false
